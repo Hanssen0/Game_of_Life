@@ -47,23 +47,32 @@ int main(int, char**) {
   glAttachShader(shader_program, vertex_shader);
   glAttachShader(shader_program, fragment_shader);
   glLinkProgram(shader_program);
+  glDeleteShader(vertex_shader);
+  glDeleteShader(fragment_shader);
   GLuint vao;
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
-  GLfloat verteces[9] {
+  GLfloat verteces[] {
     -0.5f, -0.5f, 0.f,
     0.f, 0.5f, 0.f,
-    0.5f, -0.5f, 0.f
+    0.5f, -0.5f, 0.f,
+    1.f, 0.5f, 0.f
+  };
+  GLuint indices[] {
+    0, 1, 2,
+    1, 2, 3
   };
   GLuint vbo;
+  GLuint ebo;
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(verteces), verteces, GL_STATIC_DRAW);
-  glUseProgram(shader_program);
-  glDeleteShader(vertex_shader);
-  glDeleteShader(fragment_shader);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+  glGenBuffers(1, &ebo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
   glEnableVertexAttribArray(0);
+  glUseProgram(shader_program);
   SDL_Event main_event;
   bool is_end = false;
   float color = 0;
@@ -81,7 +90,7 @@ int main(int, char**) {
       }
     }
     glClear(GL_COLOR_BUFFER_BIT);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     SDL_GL_SwapWindow(main_window);
   }
   glBindVertexArray(0);
