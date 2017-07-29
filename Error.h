@@ -8,7 +8,7 @@ class Error {
   /*Add a string after error type
   */
   Error() { clear(); }
-  inline Error& operator+(const char*); 
+  inline Error& operator+=(const char*); 
   const char* GetError() { return description_.c_str(); }
   bool IsGLSuccess();
   inline bool IsShaderSuccess(GLuint);
@@ -20,7 +20,7 @@ class Error {
   bool is_error_;
   Error & operator=(Error&) = delete;
 };
-Error& Error::operator+(const char* extern_string) {
+Error& Error::operator+=(const char* extern_string) {
   description_ += extern_string;
   return *this;
 }

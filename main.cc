@@ -40,7 +40,7 @@ int main(int, char**) {
     "#version 330 core\nin vec3 outcolor;out vec4 color;void main(){color=vec4(outcolor,1.f);}"
   };
   HHShader main_shader;
-  main_shader.Init(vertex_shader_source, fragment_shader_source);
+  main_shader.Init(vertex_shader_source, fragment_shader_source, 1);
   GLuint vao;
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
