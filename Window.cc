@@ -1,7 +1,7 @@
 #include "GLHs.h"
 #include "Error.h"
 #include "Window.h"
-Error HHShader::kError;
+bool HHWindow::is_glew_inited_ = false;
 const Error& HHShader::Init(const char* vertex_path, const char* fragment_path, const size_t uniform) {
   uniform_location.resize(uniform, 0);
   GLuint vertex_shader;

@@ -19,24 +19,19 @@ void Quit() {
   SDL_StopTextInput();
 }
 int main(int, char**) {
-  SDL_Window* main_window = nullptr;
-  SDL_GLContext main_context;
-  SDL_Window* main_window2 = nullptr;
-  SDL_GLContext main_context2;
   Init();
-  main_window = SDL_CreateWindow("My First OpenGL Program",
-                                SDL_WINDOWPOS_UNDEFINED,
-                                SDL_WINDOWPOS_UNDEFINED,
-                                kScreenWidth,
-                                kScreenHeight,
-                                SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL );
-  main_context = SDL_GL_CreateContext(main_window);
-  glewInit();
+  HHWindow main_window;
+  main_window.Create("My First OpenGL Program",
+                     SDL_WINDOWPOS_UNDEFINED,
+                     SDL_WINDOWPOS_UNDEFINED,
+                     kScreenWidth,
+                     kScreenHeight,
+                     SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
   const GLchar* vertex_shader_source = {
     "#version 330 core\nlayout(location=0)in vec3 position;layout(location=1)in vec3 mycolor;uniform float pos;out vec3 outcolor;void main(){gl_Position=vec4(position.x+pos,position.y,position.z,1.0);outcolor=mycolor;}"
   };
   const GLchar* fragment_shader_source = {
-    "#version 330 core\nin vec3 outcolor;out vec4 color;void main(){color=vec4(outcolor,1.f);}"
+    "#version 330 core\nin vec3 outcolor;out vec4 color;void main(){if(gl_FragCoord.x<200)color=vec4(0.f,0.f,0.f,1.f);else color=vec4(outcolor,1.f);}"
   };
   HHShader main_shader;
   main_shader.Init(vertex_shader_source, fragment_shader_source, 1);
@@ -86,12 +81,9 @@ int main(int, char**) {
     }
     glClear(GL_COLOR_BUFFER_BIT);
     glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
-    SDL_GL_SwapWindow(main_window);
-    SDL_GL_SwapWindow(main_window2);
+    main_window.Swap();
   }
   glBindVertexArray(0);
-  SDL_DestroyWindow(main_window);
-  SDL_DestroyWindow(main_window2);
   Quit();
   return 0;
 }

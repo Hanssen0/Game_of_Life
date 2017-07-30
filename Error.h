@@ -3,6 +3,8 @@
 #include "GLHs.h"
 #include <string>
 #include <vector>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 class Error {
  public:
   /*Add a string after error type
@@ -10,10 +12,14 @@ class Error {
   Error() { clear(); }
   inline Error& operator+=(const char*); 
   const char* GetError() { return description_.c_str(); }
+  const bool is_error() const { return is_error_; }
   bool IsGLSuccess();
-  inline bool IsShaderSuccess(GLuint);
-  inline bool IsProgramSuccess(GLuint);
-  void set_error(bool error = true) { is_error_ = error; }
+  inline bool IsShaderSuccess(const GLuint);
+  inline bool IsProgramSuccess(const GLuint);
+  inline bool IsSDLSuccess(const SDL_Window*);
+  inline bool IsSDLSuccess(const SDL_GLContext&);
+  inline bool IsGlewSuccess(const GLenum);
+  void set_error(const bool error = true) { is_error_ = error; }
   void clear() { description_.clear(), is_error_ = false; }
  private:
   std::string description_;/*A string that describe type of error*/
@@ -24,7 +30,7 @@ Error& Error::operator+=(const char* extern_string) {
   description_ += extern_string;
   return *this;
 }
-bool Error::IsShaderSuccess(GLuint shader) {
+bool Error::IsShaderSuccess(const GLuint shader) {
   GLint success = 0;
   glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
   if (success == GL_FALSE) {
@@ -32,12 +38,12 @@ bool Error::IsShaderSuccess(GLuint shader) {
     std::vector<char> error_log(success);
     glGetShaderInfoLog(shader, success, nullptr, &error_log[0]);
     description_ = &error_log[0];
-    is_error_ = false;
+    is_error_ = true;
     return false;
   }
   return true;
 }
-bool Error::IsProgramSuccess(GLuint program) {
+bool Error::IsProgramSuccess(const GLuint program) {
   GLint success = 0;
   glGetProgramiv(program, GL_LINK_STATUS, &success);
   if (success == GL_FALSE) {
@@ -45,7 +51,31 @@ bool Error::IsProgramSuccess(GLuint program) {
     std::vector<char> error_log(success);
     glGetProgramInfoLog(program, success, nullptr, &error_log[0]);
     description_ = &error_log[0];
-    is_error_ = false;
+    is_error_ = true;
+    return false;
+  }
+  return true;
+}
+bool Error::IsSDLSuccess(const SDL_Window* window) {
+  if (window == nullptr) {
+    description_ = SDL_GetError();
+    is_error_ = true;
+    return false;
+  }
+  return true;
+}
+bool Error::IsSDLSuccess(const SDL_GLContext& context) {
+  if (context == nullptr) {
+    description_ = SDL_GetError();
+    is_error_ = true;
+    return false;
+  }
+  return true;
+}
+bool Error::IsGlewSuccess(const GLenum flag) {
+  if (flag != GLEW_OK) {
+    description_ = reinterpret_cast<const char*>(glewGetErrorString(flag));
+    is_error_ = true;
     return false;
   }
   return true;
