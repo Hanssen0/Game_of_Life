@@ -1,7 +1,6 @@
+#include "GLHs.h"
 #include <SDL2/SDL.h>
-#include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
-#include <GL/gl.h>
 #include <iostream>
 #include "Window.h"
 const int kScreenWidth = 640;
@@ -66,6 +65,7 @@ int main(int, char**) {
   glGenBuffers(1, &ebo);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+  main_shader.find("pos", 0);
   main_shader.Use();
   glClearColor(1.f, 1.f, 1.f, 1.f);
   SDL_Event main_event;
@@ -80,6 +80,7 @@ int main(int, char**) {
         case SDL_TEXTINPUT:
           if (main_event.text.text[0] == 'w') color += 0.01f;
           if (main_event.text.text[0] == 's') color -= 0.01f;
+          main_shader.SetUniform(0, color);
           break;
       }
     }

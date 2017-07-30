@@ -1,3 +1,4 @@
+#include "GLHs.h"
 #include "Error.h"
 #include "Window.h"
 Error HHShader::kError;

@@ -1,7 +1,7 @@
 #ifndef OPENGL_FRAMEWORK_ERROR_H_
 #define OPENGL_FRAMEWORK_ERROR_H_
+#include "GLHs.h"
 #include <string>
-#include <GL/glew.h>
 #include <vector>
 class Error {
  public:

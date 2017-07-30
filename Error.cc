@@ -1,4 +1,4 @@
-#include <GL/glew.h>
+#include "GLHs.h" 
 #include "Error.h"
 bool Error::IsGLSuccess() {
   GLenum error;
