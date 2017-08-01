@@ -35,21 +35,20 @@ int main(int, char**) {
   };
   HHShader main_shader;
   main_shader.Init(vertex_shader_source, fragment_shader_source, 1);
-  GLuint vao;
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
+  HHVAO main_vao;
+  main_vao.Use();
   GLfloat verteces[] {
     -0.5f, -0.5f, 0.f, 1.f, 0.f, 0.f,
     0.f, 0.5f, 0.f, 0.f, 1.f, 0.f,
-    0.5f, -0.5f, 0.f, 0.f, 0.f, 1.f
+    0.5f, -0.5f, 0.f, 0.f, 0.f, 1.f,
+    1.f, 0.5f, 0.f, 0.f, 0.f, 0.f
   };
   GLuint indices[] {
-    0, 1, 2,
+    0, 1, 2
   };
-  GLuint vbo;
-  GLuint ebo;
-  glGenBuffers(1, &vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  HHBuffer vbo(1);
+  HHBuffer ebo(1);
+  vbo.Bind(GL_ARRAY_BUFFER);
   glBufferData(GL_ARRAY_BUFFER, sizeof(verteces), verteces, GL_STATIC_DRAW);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
                         6 * sizeof(GLfloat), (GLvoid*)0);
@@ -57,9 +56,9 @@ int main(int, char**) {
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
                         6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
   glEnableVertexAttribArray(1);
-  glGenBuffers(1, &ebo);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+  ebo.Bind(GL_ELEMENT_ARRAY_BUFFER);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
+               GL_STATIC_DRAW);
   main_shader.find("pos", 0);
   main_shader.Use();
   glClearColor(1.f, 1.f, 1.f, 1.f);
@@ -83,7 +82,6 @@ int main(int, char**) {
     glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
     main_window.Swap();
   }
-  glBindVertexArray(0);
   Quit();
   return 0;
 }

@@ -4,6 +4,7 @@
 #include <vector>
 #include "Error.h"
 #include "SDL2/SDL.h"
+static Error kError;
 class HHShader {
  public:
   HHShader& operator=(HHShader&) = delete;
@@ -32,7 +33,24 @@ class HHWindow {
   SDL_GLContext context_;
   static bool is_glew_inited_;
 };
-static Error kError;
+class HHVAO {
+ public:
+  HHVAO() { glGenVertexArrays(1, &vao_); }
+  ~HHVAO() { glDeleteVertexArrays(1, &vao_); }
+  void Use() { glBindVertexArray(vao_); }
+  static void Release() { glBindVertexArray(0); }
+ private:
+  GLuint vao_;
+};
+class HHBuffer {
+ public:
+  HHBuffer(const GLsizei size) : size_(size) { glGenBuffers(size, &buffer_); }
+  ~HHBuffer() { glDeleteBuffers(size_, &buffer_); }
+  void Bind(const GLenum target) { glBindBuffer(target, buffer_); }
+ private:
+  GLuint buffer_;
+  GLsizei size_;
+};
 const Error& HHShader::find(const char* name, const std::size_t location) {
   if (uniform_location.size() >= location) { 
     kError.clear();
